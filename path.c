@@ -1,18 +1,45 @@
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-int main(int argc, char *argv[], char *envp[])
+#include <string.h>
+#include "main.h"
+int main()
 {
-	char *lit_path;
+	char *line, *this_name, *token;
+	size_t i = 0;
+	extern char **environ;
+	list_t *paths, *ptr;
 
-	for (char **env = envp; *env != 0; env++)
+	while (environ[i])
 	{
-		char *thisEnv = *env;
-		lit_path = malloc(5);
-		strncpy(lit_path, thisEnv, 4);
-		if (!strcmp(lit_path, "PATH"))
-			printf("%s\n", thisEnv + 5);
+		printf("%sAAAAA\n", environ[i]);
+		this_name = malloc(5);
+		strncpy(this_name, environ[i], 4);
+		printf("%s\n", this_name);
+		if (!strcmp(this_name, "PATH"))
+		{
+			line = malloc(strlen(environ[i]) + 1 - 5);
+			strcpy(line, environ[i] + 5);
+			break;
+		}
+		i++;
 	}
+	printf("%s\n", line);
+	paths = NULL;
+	token = strtok(line, ":");
+	while (token != NULL)
+	{
+		add_node_end(&paths, token);
+		//printf("%s\n", added_node->str);
+		token = strtok(NULL, ":");
+		i++;
+	}
+	ptr = malloc(sizeof(list_t));
+	ptr = paths;
+	while (ptr)
+	{
+		printf("%s\n", ptr->str);
+		ptr = ptr->next;
+	}
+	free(line);
 	return 0;
 }
