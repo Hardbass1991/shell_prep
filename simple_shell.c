@@ -14,6 +14,7 @@ int main(__attribute__((unused)) int argc, char *argv[])
 
 	while (1)
 	{
+		i = 0;
 		args = tokenize_line(line);
 		while (args[i])
 		{
@@ -23,9 +24,15 @@ int main(__attribute__((unused)) int argc, char *argv[])
 		if (!strncmp(args[0], "exit", 4))
 			return (0);
 		if (args[0][0] != '/')
+		{
 			args[0] = get_full_command(args[0]);
-		if (!args[0])
-			continue;
+			if (!args[0])
+			{
+
+				printf("%s: No such file or directory\n", argv[0]);
+				continue;
+			}
+		}
 		parent = fork();
 		if (!parent)
 		{
@@ -47,8 +54,7 @@ int main(__attribute__((unused)) int argc, char *argv[])
 			wait(&status);
 		}
 		free(args);
-
+		free(line);
 	}
-	free(line);
 	return (0);
 }
