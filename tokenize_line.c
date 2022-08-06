@@ -7,7 +7,7 @@
  */
 int get_num_words(char *line)
 {
-	int i = 0, n = 0;
+	int i = 0, n = 1;
 
 	while (line[i])
 	{
