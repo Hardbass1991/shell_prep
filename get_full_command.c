@@ -1,17 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include "main.h"
-char *get_full_command(char *command)
+/**
+ * PATH_to_dirs - returns string with value of variable PATH
+ *
+ * Return: string with value of PATH
+ */
+char *PATH_to_dirs()
 {
-	char *line, *this_name, *token, *check_com;
-	size_t i = 0, n, command_found = 0;
-	extern char **environ;
-	list_t *paths, *ptr;
-	struct stat st;
+	char *this_name, *line;
+	int i = 0;
 
 	while (environ[i])
 	{
@@ -25,23 +21,34 @@ char *get_full_command(char *command)
 		}
 		i++;
 	}
-	//printf("%s\n", line);
+	free(this_name);
+	return (line);
+}
+
+/**
+ * get_full_command - searches for an input command in each
+ * directory of PATH
+ * @command: input command
+ *
+ * Return: command with directory if founf, NULL otherwise
+ */
+char *get_full_command(char *command)
+{
+	char *line, *token, *check_com;
+	size_t n, command_found = 0;
+	list_t *paths, *ptr;
+	struct stat st;
+
+	line = PATH_to_dirs();
+
 	paths = NULL;
 	token = strtok(line, ":");
 	while (token != NULL)
 	{
 		add_node_end(&paths, token);
-		//printf("%s\n", added_node->str);
 		token = strtok(NULL, ":");
-		i++;
 	}
 	ptr = malloc(sizeof(list_t));
-	ptr = paths;
-	while (ptr)
-	{
-		printf("%s\n", ptr->str);
-		ptr = ptr->next;
-	}
 	free(line);
 	ptr = paths;
 	while (ptr)
@@ -51,7 +58,6 @@ char *get_full_command(char *command)
 		strncpy(check_com, ptr->str, n);
 		check_com[n] = '/';
 		strcpy(check_com + n + 1, command);
-		printf("%s\n", check_com);
 		if (stat(check_com, &st) == 0)
 		{
 			command_found = 1;
@@ -59,7 +65,6 @@ char *get_full_command(char *command)
 		}
 		ptr = ptr->next;
 	}
-	//printf("%ld\n", command_found);
 	if (command_found)
 		return (check_com);
 	return (NULL);
