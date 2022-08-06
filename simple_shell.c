@@ -1,26 +1,20 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
 #include "main.h"
+/**
+ * main - runs a shell
+ * @argc: number of arguments
+ * @argv: array of arguments
+ *
+ * Return: 0 if successful, -1 otherwise
+ */
 int main(__attribute__((unused)) int argc, char *argv[])
 {
-	char *line = NULL;
-	char **args;
-	int success, status, i = 0;
+	char *line = NULL, **args;
+	int success, status;
 	pid_t parent;
-	extern char **environ;
 
 	while (1)
 	{
-		i = 0;
 		args = tokenize_line(line);
-		while (args[i])
-		{
-			printf("%s %ld\n", args[i], strlen(args[i]));
-			i++;
-		}
 		if (!strncmp(args[0], "exit", 4))
 			return (0);
 		if (args[0][0] != '/')
@@ -28,7 +22,6 @@ int main(__attribute__((unused)) int argc, char *argv[])
 			args[0] = get_full_command(args[0]);
 			if (!args[0])
 			{
-
 				printf("%s: No such file or directory\n", argv[0]);
 				continue;
 			}
@@ -50,9 +43,7 @@ int main(__attribute__((unused)) int argc, char *argv[])
 				return (0);
 		}
 		else
-		{
 			wait(&status);
-		}
 		free(args);
 		free(line);
 	}
